@@ -45,7 +45,19 @@ public class CampaignStatService {
     for (SPCampaignReport report : reports) {
       Long campaignId = report.getCampaignId();
 
-      campaignAnalyticMap.computeIfAbsent(campaignId, k -> new SPCampaignStatistic(report));
+      // Створюємо нову статистику зі звіту
+      SPCampaignStatistic newStatistic = new SPCampaignStatistic(report);
+
+      // Перевіряємо, чи є вже статистика для цієї кампанії в мапі
+      if (campaignAnalyticMap.containsKey(campaignId)) {
+        // Якщо вже є, об'єднуємо з існуючою статистикою
+        SPCampaignStatistic existingStatistic = campaignAnalyticMap.get(campaignId);
+        existingStatistic.add(newStatistic);
+      } else {
+        // Якщо немає, додаємо нову статистику
+        campaignAnalyticMap.put(campaignId, newStatistic);
+      }
+
     }
 
     // Get all enabled SP campaigns by profile and portfolio
